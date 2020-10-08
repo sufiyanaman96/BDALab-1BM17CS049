@@ -1,0 +1,18 @@
+Student
+$ mongoexport --db Student --collection Student -f id,RollNo,Age,Contact,Name,Email --type csv --out Student.csv
+2020-10-08T14:55:10.975+0530	connected to: localhost
+2020-10-08T14:55:10.975+0530	exported 4 records
+
+
+$ mongoimport --type=csv --db Student --collection imported_students --file student.csv --headerline
+2020-10-08T14:59:37.051+0530	connected to: localhost
+2020-10-08T14:59:37.248+0530	imported 57 documents
+
+Bank
+$ mongoimport --db bank --collection imported_customer --type csv --file bank-data.csv --headerline
+2020-10-08T15:04:32.038+0530	connected to: localhost
+2020-10-08T15:04:32.240+0530	imported 600 documents
+
+$ mongoexport --db bank  --collection customer -f id,cust_id,Balance,Type --type csv --out export_customer.csv
+2020-10-08T15:17:40.877+0530	connected to: localhost
+2020-10-08T15:17:40.878+0530	exported 6 records
