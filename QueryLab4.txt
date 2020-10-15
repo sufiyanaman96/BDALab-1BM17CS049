@@ -1,0 +1,47 @@
+Assignment 1-
+db.books.save({_id:3,Category:"Analytics",BookName:"Competing on Analytics",Author:"Thomas",qty:8,price:150,rol:20,pages:150})
+db.books.save({_id:4,Category:"Visualisation",BookName:"Visualising Data",Author:"Ben Fry",qty:12,price:325,rol:6,pages:450})
+db.books.save({_id:5,Category:"Web Mining",BookName:"Learning R",Author:"Richard",qty:6,price:850,rol:10,pages:120})
+db.books.find()
+var map = function(){
+    var category;
+    if(this.pages>=300)
+        category = "Big books"
+    else
+        category = "Small Books"
+    emit(category, {
+        Bookname : this.Bookname});
+}
+var reduce = function(key, values){
+   return values.length    
+};
+db.books.mapReduce(map, reduce, {out: "Bookcategory"})
+db.Bookcategory.find()
+
+Assignment 2-
+use Database
+db
+db.createCollection("Asgn2")
+mongoimport -d Database -c Asgn2 --type csv --headerline --file "bank-data.csv"
+db.Asgn2.aggregate([
+    { $group : { _id: null, sum: {$sum:"$children"} } }
+])
+db.Asgn2.aggregate([
+    { $group : { _id: "Avg of Age", avg: {$avg:"$age"} } }
+])
+
+Assignment 2- (Array)
+db.createCollection("Country")
+db.Country.insert({_id:1,Cities:["Bangalore","Chennai"]})
+db.Country.insert({_id:2,Cities:["Hyderabad","Mumbai","Delhi"]})
+db.Country.insert({_id:3,Cities:["rajamundry","jamshedpur","Jodhpur"]})
+db.Country.find()
+db.Country.update({_id:1},{$push:{population:{Bangalore:30,Chennai:45}}})
+db.Country.find()
+db.Country.update({_id:3},{$pop:{Cities:1}})
+db.Country.find()
+db.Country.update({Cities:"Hyderabad"},{$pull:{Cities:'Hyderabad'}})
+db.Country.find()
+db.Country.update({_id:1},{$set:{'Cities.2':'Srinagar'}})
+db.Country.update({_id:2},{$addToSet:{Cities:"Trichi"}})
+db.Country.find()
