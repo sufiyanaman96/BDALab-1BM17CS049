@@ -1,0 +1,20 @@
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 990da5d2-e983-4e47-8cce-c1f7266426a1 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |        BDA |       1 | 1/2/2020 |             2
+ c5ea40e3-2947-477b-a58d-29532abbe81f |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ 6ea341b6-2146-471d-a9de-a3bd63d11c4b |    meghna |        BDA |       1 | 1/2/2020 |             1
+
+(5 rows)
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 990da5d2-e983-4e47-8cce-c1f7266426a1 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |        BDA |       1 | 1/2/2020 |             2
+ c5ea40e3-2947-477b-a58d-29532abbe81f |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ 6ea341b6-2146-471d-a9de-a3bd63d11c4b |    meghna |        BDA |       1 | 1/2/2020 |             1
+
+(5 rows)

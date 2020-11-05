@@ -1,0 +1,172 @@
+Microsoft Windows [Version 10.0.19041.450]
+(c) 2020 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>cd /
+
+C:\>cd "Program Files"
+
+C:\Program Files>cd apache-cassandra-3.11.8
+
+C:\Program Files\apache-cassandra-3.11.8>cd bin
+
+C:\Program Files\apache-cassandra-3.11.8\bin>cqlsh
+
+WARNING: console codepage must be set to cp65001 to support utf-8 encoding on Windows platforms.
+If you experience encoding problems, change your console codepage with 'chcp 65001' before starting cqlsh.
+
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.11.8 | CQL spec 3.4.4 | Native protocol v4]
+Use HELP for help.
+WARNING: pyreadline dependency missing.  Install to enable tab completion.
+
+I
+cqlsh> CREATE KEYSPACE Employee WITH replication = {'class':'SimpleStrategy','replication_factor':3};
+
+cqlsh> use employee;
+cqlsh:employee> CREATE COLUMNFAMILY employee_info(emp_id INT PRIMARY KEY,emp_name VARCHAR,desgination VARCHAR,doj VARCHAR,dept_name VARCHAR,salary INT);
+cqlsh:employee> BEGIN BATCH
+            ...         INSERT INTO employee_info(emp_id,dept_name,desgination,doj,emp_name,salary)values(120,'Development','CTO','10/11/2015','Ayush',2000000);
+            ...         INSERT INTO employee_info(emp_id,dept_name,desgination,doj,emp_name,salary)values(121,'HR','Employee','20/01/2011','Raghav',1500000);
+            ...         INSERT INTO employee_info(emp_id,dept_name,desgination,doj,emp_name,salary)values(122,'Maintainance','staff','10/07/2020','Sanjay',50000);
+            ...         INSERT INTO employee_info(emp_id,dept_name,desgination,doj,emp_name,salary)values(123,'IT','Assistant','25/07/2014','Tanya',100000);
+            ... APPLY BATCH;
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name    | desgination | doj        | emp_name | salary
+--------+--------------+-------------+------------+----------+---------
+    120 |  Development |         CTO | 10/11/2015 |    Ayush | 2000000
+    123 |           IT |   Assistant | 25/07/2014 |    Tanya |  100000
+    122 | Maintainance |       staff | 10/07/2020 |   Sanjay |   50000
+    121 |           HR |    Employee | 20/01/2011 |   Raghav | 1500000
+
+(4 rows)
+cqlsh:employee> UPDATE employee_info SET emp_name = 'Aakash',dept_name = 'IT' WHERE emp_id = 121;
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name    | desgination | doj        | emp_name | salary
+--------+--------------+-------------+------------+----------+---------
+    120 |  Development |         CTO | 10/11/2015 |    Ayush | 2000000
+    123 |           IT |   Assistant | 25/07/2014 |    Tanya |  100000
+    122 | Maintainance |       staff | 10/07/2020 |   Sanjay |   50000
+    121 |           IT |    Employee | 20/01/2011 |   Aakash | 1500000
+
+(4 rows)
+cqlsh:employee> ALTER TABLE employee_info ADD Project VARCHAR;
+cqlsh:employee> UPDATE employee_info SET project='TIP' WHERE emp_id=120;
+cqlsh:employee> UPDATE employee_info SET project='Sentiment Analysis' WHERE emp_id=121;
+cqlsh:employee> UPDATE employee_info SET project='Facial recognition' WHERE emp_id=123;
+cqlsh:employee> INSERT INTO employee_info(emp_id, dept_name, desgination, doj, emp_name,project,salary)values(124, 'PR','Senior Manager','8/8/2020','Load balancing server','Abhi',20000) USING TTL 60;
+cqlsh:employee> SELECT TTL(desgination) FROM employee_info where emp_id=124;
+
+ ttl(desgination)
+------------------
+               59
+
+(1 rows)
+
+II
+cqlsh> CREATE KEYSPACE Library WITH replication = {'class':'SimpleStrategy','replication_factor':3};
+cqlsh> use Library;
+cqlsh:library>  CREATE COLUMNFAMILY libraryinfo(stud_id uuid, counter_value counter, stud_name VARCHAR, book_name VARCHAR, book_id INT, DOI VARCHAR, PRIMARY KEY(stud_id,stud_name,book_name,book_id,doi));
+cqlsh:library> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=cdd43759-bc64-4119-91bf-3e9ec59ca966 and stud_name='Anjali' and book_name='malgudi' and book_id=1 and doi='1/2/2020';
+cqlsh:library> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=uuid() and stud_name='Ayush' and book_name='Hardy boys' and book_id=1 and doi='1/2/2020';
+cqlsh:library> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=uuid() and stud_name='Ayush' and book_name='Hardy boys' and book_id=1 and doi='1/2/2020';
+cqlsh:library> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=uuid() and stud_name='meghna' and book_name='BDA' and book_id=1 and doi='1/2/2020';
+cqlsh:library>
+cqlsh:library> select * from libraryinfo;
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 7160cf0d-f0de-4864-884c-2b4af9da7f68 |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ 4f1ab3a7-e5ba-496c-8f73-a6c9bd366156 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ f6095976-c054-48d5-aaf0-fb3fe2678aa4 |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+
+(4 rows)
+
+cqlsh:library> UPDATE libraryinfo set counter_value=counter_value + 1 where stud_id=a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d and stud_name='meghna' and book_name='BDA' and book_id=1 and doi='1/2/2020';
+cqlsh:library> select * from libraryinfo;
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 7160cf0d-f0de-4864-884c-2b4af9da7f68 |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ 4f1ab3a7-e5ba-496c-8f73-a6c9bd366156 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ f6095976-c054-48d5-aaf0-fb3fe2678aa4 |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |        BDA |       1 | 1/2/2020 |             2
+
+(5 rows)
+cqlsh:library> SELECT * from libraryinfo where counter_value=2 ALLOW FILTERING;
+
+ stud_id                              | stud_name | book_name | book_id | doi      | counter_value
+--------------------------------------+-----------+-----------+---------+----------+---------------
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |       BDA |       1 | 1/2/2020 |             2
+
+(1 rows)
+
+cqlsh:library> CREATE KEYSPACE Library1 WITH replication = {'class':'SimpleStrategy','replication_factor':3};
+cqlsh:library> use Library1
+           ... use Library1;
+Improper use command.
+cqlsh:library> use Library1;
+cqlsh:library1>  CREATE COLUMNFAMILY libraryinfo(stud_id uuid, counter_value counter, stud_name VARCHAR, book_name VARCHAR, book_id INT, DOI VARCHAR, PRIMARY KEY(stud_id,stud_name,book_name,book_id,doi));
+cqlsh:library1> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=cdd43759-bc64-4119-91bf-3e9ec59ca966 and stud_name='Anjali' and book_name='malgudi' and book_id=1 and doi='1/2/2020';
+cqlsh:library1> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=uuid() and stud_name='Ayush' and book_name='Hardy boys' and book_id=1 and doi='1/2/2020';
+cqlsh:library1> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=uuid() and stud_name='meghna' and book_name='BDA' and book_id=1 and doi='1/2/2020';
+cqlsh:library1> select * from libraryinfo;
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 990da5d2-e983-4e47-8cce-c1f7266426a1 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ c5ea40e3-2947-477b-a58d-29532abbe81f |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+
+(3 rows)
+cqlsh:library1> UPDATE libraryinfo set counter_value=counter_value+1 where stud_id=a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d and stud_name='meghna' and book_name='BDA' and book_id=1 and doi='1/2/2020';
+cqlsh:library1> select * from libraryinfo;
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 990da5d2-e983-4e47-8cce-c1f7266426a1 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |        BDA |       1 | 1/2/2020 |             1
+ c5ea40e3-2947-477b-a58d-29532abbe81f |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+
+(4 rows)
+cqlsh:library1> UPDATE libraryinfo set counter_value=counter_value + 1 where stud_id=uuid() and stud_name='meghna' and book_name='BDA' and book_id=1 and doi='1/2/2020';
+cqlsh:library1> select * from libraryinfo;
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 990da5d2-e983-4e47-8cce-c1f7266426a1 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |        BDA |       1 | 1/2/2020 |             1
+ c5ea40e3-2947-477b-a58d-29532abbe81f |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ 6ea341b6-2146-471d-a9de-a3bd63d11c4b |    meghna |        BDA |       1 | 1/2/2020 |             1
+
+(5 rows)
+cqlsh:library1> UPDATE libraryinfo set counter_value=counter_value + 1 where stud_id=a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d and stud_name='meghna' and book_name='BDA' and book_id=1 and doi='1/2/2020';
+cqlsh:library1> select * from libraryinfo;
+
+ stud_id                              | stud_name | book_name  | book_id | doi      | counter_value
+--------------------------------------+-----------+------------+---------+----------+---------------
+ 990da5d2-e983-4e47-8cce-c1f7266426a1 |    meghna |        BDA |       1 | 1/2/2020 |             1
+ cdd43759-bc64-4119-91bf-3e9ec59ca966 |    Anjali |    malgudi |       1 | 1/2/2020 |             1
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |        BDA |       1 | 1/2/2020 |             2
+ c5ea40e3-2947-477b-a58d-29532abbe81f |     Ayush | Hardy boys |       1 | 1/2/2020 |             1
+ 6ea341b6-2146-471d-a9de-a3bd63d11c4b |    meghna |        BDA |       1 | 1/2/2020 |             1
+
+(5 rows)
+cqlsh:library1> SELECT * from libraryinfo where counter_value=2 ALLOW FILTERING;
+
+ stud_id                              | stud_name | book_name | book_id | doi      | counter_value
+--------------------------------------+-----------+-----------+---------+----------+---------------
+ a56165fc-11c0-4e47-ba0b-e4ad8dd7b69d |    meghna |       BDA |       1 | 1/2/2020 |             2
+
+(1 rows)
+
+cqlsh:library1> CAPTURE 'C:\Users\sufiy\Desktop\BDALab\data.csv';
+Now capturing query output to 'C:\\Users\\sufiy\\Desktop\\BDALab\\data.csv'.
+cqlsh:library1> select * from libraryinfo;
+cqlsh:library1> select * from libraryinfo;
+cqlsh:library1>
