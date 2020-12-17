@@ -1,0 +1,65 @@
+Queries:
+
+Create Table emp:
+CREATE TABLE emp (ID int, Name String, Salary int, Des String)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY '\t'
+    > LINES TERMINATED BY '\n';
+
+Load data from external file:
+LOAD DATA LOCAL INPATH 'text' OVERWRITE INTO TABLE emp;
+
+SELECT * FROM emp;
+OK
+1201	Sufiyan	45000	Manager
+1202	Aman	45000	Reader
+1203	Rida	40000	Writer
+1204	Adnan	40000	Hr 
+1205	Abdul	30000	Op 
+
+View with salary > 30000:
+CREATE VIEW emp_30000 AS SELECT * FROM employee WHERE salary>30000;
+SELECT * FROM empl_30000;
+OK
+1201	Sufiyan	45000	Manager
+1202	Aman	45000	Reader
+1203	Rida	40000	Writer
+1204	Adnan	40000	Hr 
+
+Alter table to add new column:
+ALTER TABLE emp ADD COLUMNS (Dept_id int);
+Adding values into new column:
+INSERT OVERWRITE TABLE emp SELECT id, name, salary, des, CASE WHEN id=1201 THEN '21' ELSE dept_id END AS dept_id FROM emp;
+
+SELECT * FROM emp ORDER BY Dept_id;
+OK
+1203	Rida	40000	Writer	21
+1202	Aman	45000	Reader	21
+1201	Sufiyan	45000	Manager	21
+1204	Adnan	40000	Hr 	22
+1205	Abdul	30000	Op 	23
+
+Query to retrieve the number of employees in each department whose salary is greater than 30000:
+SELECT count(*),Dept_id FROM emp WHERE salary > 30000 GROUP BY Dept_id;
+OK
+3	21
+1	22
+
+New table with Department:
+ CREATE TABLE depart (Dept_id int , Dept_name String)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY '\t'
+    > LINES TERMINATED BY '\n';
+
+Cumulative details:
+SELECT e.id, e.name, e.salary, e.des, e.Dept_id, d.Dept_name FROM emp e
+    > JOIN depart d ON (d.Dept_id = e.Dept_id);
+OK
+1201	Sufiyan	45000	Manager	21	CSE
+1202	Aman	45000	Reader	21	CSE
+1203	Rida	40000	Writer	21	CSE
+1204	Adnan	40000	Hr 	22	ISE
+1205	Abdul	30000	Op 	23	ECE
+
+
+
